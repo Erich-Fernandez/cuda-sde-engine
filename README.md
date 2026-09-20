@@ -5,7 +5,7 @@ A high-throughput CUDA C++ simulation engine engineered to benchmark the numeric
 Built using low-level CUDA Driver APIs (NVRTC), register-level RNG caching via `curanddx`, hardware FMA instructions, and custom shared-memory parallel reduction kernels.
 
 > 📄 **Full Technical Report & Plots:**  
-> For the complete stochastic calculus derivations, GPU register occupancy analysis, runtime profiling, and empirical convergence log-log plots, **[Read the Full Technical Report (PDF)](docs/report.pdf)**.
+> For the complete stochastic calculus derivations, GPU register occupancy analysis, runtime profiling, and empirical convergence log-log plots, **[Read the Full Technical Report (PDF)](doc/report.pdf)**.
 >
 > ## Technical & Architectural Highlights
 
