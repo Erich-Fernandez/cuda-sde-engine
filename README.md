@@ -30,15 +30,21 @@ Sample Size ($N$): **100,000,000 paths** | Step Count ($n$): **160 iterations**
 
 *Register Usage:* Capped at $37$ registers/thread, sustaining peak SM warp occupancy ($256$ threads/block $\times$ $6$ blocks/SM).
 
----
-
 ## Repository Structure
 
 ```text
 .
 ├── docs/
 │   └── report.pdf           # Full technical paper with regression plots & analysis
-├── src/                     # C++ / CUDA C header and source files (.cu, .hpp, .h, .c)
-├── cuda-sde-engine.sln      # Visual Studio solution file
-├── cuda-sde-engine.vcxproj  # Visual Studio project file
+├──CudaRuntime1
+│   ├── CUDArunner.hpp       # The custom class to run kernels that use curanddx and some other technicalities with CUDA
+│   ├── Configs.h            
+│   ├── CudaRuntime1.vcxproj # Visual Studio project file
+│   ├── GBM_kernel.cu        # the main code for the actual GBM and others
+│   ├── GBM_kernel.h         
+│   ├── ParallelAdd.cu       # kernel for the parallel reduced addition
+│   ├── ParallelAdd.h        
+│   ├── rcommon.hpp          # helper files for CUDArunner.hpp, mostly gotten from official nvidia sample code
+│   ├── main.cu              # just the main loop that produces the data in the infographics in report.pdf
+│   ├── nvrtc_helper.hpp     # helper files for CUDArunner.hpp, mostly gotten from official nvidia sample code
 └── README.md
