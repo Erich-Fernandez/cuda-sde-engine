@@ -1,23 +1,22 @@
-# CUDA-Accelerated Monte Carlo SDE Engine
+# Euler-Maruyama Convergence Tested On GBM Using Monte Carlo Simulation Running on CUDA C++
 
-A high-throughput CUDA C++ simulation engine engineered to benchmark the numerical convergence of the **Euler-Maruyama scheme** for Geometric Brownian Motion (GBM) across $10^8$ stochastic sample paths. 
+This is a CUDA C++ project made as a visual studio solution (custom configurations must be made to adapt it to your PC - meaning running the code as is likely to just produce errors - more details given below). Specifically, this is a Euler-Maruyama scheme convergence benchmark project, applied to the Geometric Brownian Motion. This was made as a final project for my GPU Computing class.
 
-Built using low-level CUDA Driver APIs (NVRTC), register-level RNG caching via `curanddx`, hardware FMA instructions, and custom shared-memory parallel reduction kernels.
+Built using curanddx and parallel reduction kernels.
 
 > 📄 **Full Technical Report & Plots:**  
-> For the complete stochastic calculus derivations, GPU register occupancy analysis, runtime profiling, and empirical convergence log-log plots, **[Read the Full Technical Report (PDF)](doc/report.pdf)**.
->
-> ## Technical & Architectural Highlights
+> For the actual equation used, GPU register occupancy analysis, runtime profiling, and empirical convergence log-log plots, **[Read the Full Technical Report (PDF)](doc/report.pdf)**.
 
-* **Low-Level CUDA Driver API & NVRTC Integration:** Circumvented CUDA Runtime API limitations to compile runtime kernels using NVRTC and manage GPU execution contexts via the Driver API.
-* **In-Register RNG State Caching:** Integrated `curanddx` to cache random number generator states directly in SM registers rather than global memory, maximizing throughput during path generation.
-* **Hardware-Accelerated Double Precision:** Utilized Fused Multiply-Add (`fma`) hardware instructions to perform float operations in a single clock cycle while preserving critical floating-point precision for small error terms.
-* **Parallel Reduction Architecture:** Designed custom two-pass shared-memory parallel reduction kernels to aggregate sample path expectations across 100,000,000 values in $13.94\text{ ms}$.
-* **Empirical Scheme Verification:** Executed log-log linear regressions across varying step sizes ($n = 16 \dots 160$) to empirically verify the theoretical order of convergence ($p = 2$).
+> ## Technical & Architectural Highlights
+* **NVRTC Integration:** Due to bugs in the current curanddx version, it is necessary to build your own custom Driver API to be able to use curanddx. My usage is illustrative, as I have yet to see a detailed guide on how to navigate the current bugs.
+* **RNG Directly Inside the Register:** Curanddx is better than the more ancient cuRand specifically because it caches the states directly in the register rather than on global memory, maximizing throughput. Though of course, this is a tradeoff and one should weigh the cons of more register usage.
+* **FMA:** Fused Multiply-Add was used to perform float operations in a single clock cycle. 
+* **Parallel Reduction:** Two-pass shared-memory parallel reduction kernel was used.
+* **Final Plotting:** Log-log linear regression is given in the full technical report to empirically verify the theoretical order of convergence, for $p = 2$ at least.
 
 ---
 
-## Headline Performance Benchmarks
+## Performance Benchmarks and NVRTC & CURANDDX Concerns
 
 Hardware Environment: **NVIDIA GeForce RTX 3070**  
 Sample Size ($N$): **100,000,000 paths** | Step Count ($n$): **160 iterations**
@@ -29,6 +28,8 @@ Sample Size ($N$): **100,000,000 paths** | Step Count ($n$): **160 iterations**
 | **Parallel Sum Reduction** | **$13.94\text{ ms}$** | **$57.82\text{ GB/s}$** Effective Bandwidth |
 
 *Register Usage:* Capped at $37$ registers/thread, sustaining peak SM warp occupancy ($256$ threads/block $\times$ $6$ blocks/SM).
+
+My VS solution only works for my specific GPU. If you are not using an RTX 3070 and would like to run this code, change the configs before you run it. Furthermore, this code only runs for the version 0.2.3 as I had to do patchwork because some of the libraries' file locations were jumbled around. For context, curanddx, or at least ver 0.2.3, had certain header and dependent files containing mismatched include paths, causing "file-not-found" errors even if you correctly installed the library.
 
 ## Repository Structure
 
